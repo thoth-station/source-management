@@ -17,7 +17,6 @@
 
 import os
 import setuptools
-from setuptools.command.test import test as TestCommand
 from pathlib import Path
 
 def get_install_requires():
