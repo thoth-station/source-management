@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Kebechet
+# Source Management
 # Copyright(C) 2018, 2019, 2020 Fridolin Pokorny
 #
 # This program is free software: you can redistribute it and / or modify
