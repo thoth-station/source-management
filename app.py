@@ -17,7 +17,7 @@
 
 """This is the main script of the sourcemanagement project."""
 
-from sourcemanagement.version import __version__
+from sourcemanagement import __version__
 
 if __name__ == "__main__":
     print(f"A sourcemanagement project with Thoth integration, v{__version__}.")

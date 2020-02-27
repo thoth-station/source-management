@@ -16,22 +16,42 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import sys
-from setuptools import setup
+import setuptools
 from setuptools.command.test import test as TestCommand
 from pathlib import Path
 
+def get_install_requires():
+    with open('requirements.txt', 'r') as requirements_file:
+        # TODO: respect hashes in requirements.txt file
+        res = requirements_file.readlines()
+        return [req.split(' ', maxsplit=1)[0] for req in res if req]
 
-setup(
-    name="thoth-sourcemanagement", # Replace with your own username
-    version="0.0.1",
+
+def get_version():
+    with open(os.path.join('sourcemanagement', '__init__.py')) as f:
+        content = f.readlines()
+
+    for line in content:
+        if line.startswith('__version__ ='):
+            # dirty, remove trailing and leading chars
+            return line.split(' = ')[1][1:-2]
+    raise ValueError("No version identifier found")
+
+
+VERSION = get_version()
+
+setuptools.setup(
+    name="thoth-sourcemanagement",
+    version=VERSION,
     author="Sai Sankar Gochhayat",
     author_email="saisankargochhayat@gmail.com",
-    description="A small example package",
-    long_description=long_description,
+    description="This package helps thoth app's interact with git forges like Github, Gitlab.",
+    long_description=Path('README.md').read_text(),
     long_description_content_type="text/markdown",
-    url="https://github.com/pypa/sampleproject",
+    url="https://github.com/thoth-station/sourcemanagement",
+    license='GPLv3+',
     packages=setuptools.find_packages(),
+    install_requires=get_install_requires(),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
