@@ -48,7 +48,7 @@ setuptools.setup(
     description="This package helps thoth app's interact with git forges like Github, Gitlab.",
     long_description=Path('README.md').read_text(),
     long_description_content_type="text/markdown",
-    url="https://github.com/thoth-station/sourcemanagement",
+    url="https://github.com/thoth-station/source-management",
     license='GPLv3+',
     packages=setuptools.find_packages(),
     install_requires=get_install_requires(),
