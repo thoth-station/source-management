@@ -29,6 +29,7 @@ from ogr.services.gitlab import GitlabService
 from .enums import ServiceType
 from ogr.abstract import Issue
 from ogr.abstract import PullRequest
+from ogr.abstract import PRStatus
 from .exception import CannotFetchPRError
 from .exception import CannotFetchBranchesError
 from .exception import CreatePRError
