@@ -27,7 +27,7 @@ def get_install_requires():
 
 
 def get_version():
-    with open(os.path.join('sourcemanagement', '__init__.py')) as f:
+    with open(os.path.join('thoth/sourcemanagement', '__init__.py')) as f:
         content = f.readlines()
 
     for line in content:

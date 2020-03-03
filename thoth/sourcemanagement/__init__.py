@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# project sourcemanagement
-# Copyright(C) 2010 Red Hat, Inc.
+# source-management
+# Copyright(C) 2020 Sai Sankar Gochhayat
 #
 # This program is free software: you can redistribute it and / or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,9 +15,4 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-"""This is the main script of the sourcemanagement project."""
-
-from sourcemanagement import __version__
-
-if __name__ == "__main__":
-    print(f"A sourcemanagement project with Thoth integration, v{__version__}.")
+__version__ = "0.2.5"

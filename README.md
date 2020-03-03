@@ -5,7 +5,7 @@ We use OGR underneath to interact with git forges.
 ## Install
 Use pipenv - 
 This project is released on
-[PyPI](https://pypi.org/project/thoth-common), so the latest release can be
+[PyPI](https://pypi.org/project/thoth-sourcemanagement), so the latest release can be
 installed via pip or [Pipenv](https://pipenv.readthedocs.io) as shown below:
 
 `pipenv install thoth-sourcemanagement`
@@ -13,8 +13,8 @@ installed via pip or [Pipenv](https://pipenv.readthedocs.io) as shown below:
 
 ## How to use - 
 ```python
-from sourcemanagement.sourcemanagement import SourceManagement
-from sourcemanagement.enums import ServiceType
+from thoth.sourcemanagement.sourcemanagement import SourceManagement
+from thoth.sourcemanagement.enums import ServiceType
 
 # Service type you want to use
 service_type = ServiceType.GITHUB
