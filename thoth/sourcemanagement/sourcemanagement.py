@@ -147,10 +147,10 @@ class SourceManagement:
     def _gitlab_assign(self, issue: Issue, assignees: typing.List[str]) -> None:
         """Assign the given users to a particular issue. Gitlab assignee id's are different from username."""
         assignees = self._gitlab_fetch_userid(assignees)
-        data = {"assignees": assignees}
+        data = { "assignee_ids":assignees}
         response = requests.Session().put(
-            f"{BASE_URL['gitlab']}/repos/{self.slug}/issues/{issue.id}/assignees",
-            headers={f"Authorization": f"token {self.token}"},
+            f"{BASE_URL['gitlab']}/projects/{quote_plus(self.slug)}/issues/{issue.id}",
+            params={"private_token": self.token},
             json=data,
         )
 
