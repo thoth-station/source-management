@@ -1,7 +1,7 @@
-# Changelog for Thoth's Template GitHub Project
+# Changelog for Thoth's Source Management Project
 
-## [0.1.0] - 2019-Sep-11 - goern
+## [0.1.0] - 2020-Feb-27 - saisankargochhayat
 
 ### Added
 
-all the things that you see...
+Initial project setup
