@@ -58,11 +58,15 @@ class SourceManagement:
 
         if self.service_type == ServiceType.GITHUB:
             self.service = GithubService(self.token)
+            if service_url != None:
+                self.service = GithubService(self.token, instance_url=service_url)
             self.repository = self.service.get_project(
                 repo=self.repo, namespace=self.namespace
             )
         elif self.service_type == ServiceType.GITLAB:
             self.service = GitlabService(self.token)
+            if service_url != None:
+                self.service = GitlabService(self.token, instance_url=service_url)
             self.repository = self.service.get_project(
                 repo=self.repo, namespace=self.namespace
             )
