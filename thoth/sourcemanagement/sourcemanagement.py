@@ -154,7 +154,10 @@ class SourceManagement:
     def open_merge_request(self, commit_msg: str, branch_name: str, body: str, labels: list) -> PullRequest:
         """Open a merge request for the given branch."""
         try:
-            merge_request = self.repository.create_pr(commit_msg, body, "master", branch_name)
+            if self.repository.is_fork:
+                merge_request = self.repository.create_pr(commit_msg, body, "master", branch_name, self.namespace)
+            else:
+                merge_request = self.repository.create_pr(commit_msg, body, "master", branch_name)
             merge_request.add_label(*labels)
 
         except Exception as exc:
