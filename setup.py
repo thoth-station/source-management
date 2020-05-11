@@ -45,7 +45,7 @@ setuptools.setup(
     author="Sai Sankar Gochhayat",
     author_email="saisankargochhayat@gmail.com",
     description="This package helps thoth app's interact with git forges like Github, Gitlab.",
-    long_description=Path('README.md').read_text(),
+    long_description=Path('README.rst').read_text(),
     url="https://github.com/thoth-station/source-management",
     license='GPLv3+',
     packages=setuptools.find_packages(),
