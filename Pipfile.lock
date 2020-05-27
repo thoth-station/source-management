@@ -96,10 +96,10 @@
         },
         "deprecated": {
             "hashes": [
-                "sha256:0cf37d293a96805c6afd8b5fc525cb40f23a2cac9b2d066ac3bd4b04e72ceccc",
-                "sha256:55b41a15bda04c6a2c0d27dd4c2b7b81ffa6348c9cad8f077ac1978c59927ab9"
+                "sha256:525ba66fb5f90b07169fdd48b6373c18f1ee12728ca277ca44567a367d9d7f74",
+                "sha256:a766c1dccb30c5f6eb2b203f87edd1d8588847709c78589e1521d769addc8218"
             ],
-            "version": "==1.2.9"
+            "version": "==1.2.10"
         },
         "gitdb": {
             "hashes": [
@@ -124,11 +124,11 @@
         },
         "ogr": {
             "hashes": [
-                "sha256:1b588dc1dfb2c1dbeb4457986462e9449d61c5656ceebbd8ee636a25dbcd5ab3",
-                "sha256:32cb86ce6b80c7b6ae105424ed516e4b262fb7a143e4ca7b1273fb4aba416a13"
+                "sha256:b4643b02a9fb4f3c755f88286948264323340597ae6c17d9dadb91cd4fdd9a5d",
+                "sha256:eddfc3fba612d8448a4dcd47abd7c200cb4262cd45f0d799af3662c60ef42a0b"
             ],
             "index": "pypi",
-            "version": "==0.12.0"
+            "version": "==0.12.1"
         },
         "pexpect": {
             "hashes": [
@@ -198,10 +198,10 @@
         },
         "six": {
             "hashes": [
-                "sha256:236bdbdce46e6e6a3d61a337c0f8b763ca1e8717c03b369e87a7ec7ce1319c0a",
-                "sha256:8f3cd2e254d8f793e7f3d6d9df77b92252b52637291d0f0da013c76ea2724b6c"
+                "sha256:30639c035cdb23534cd4aa2dd52c3bf48f06e5f4a941509c8bafd8ce11080259",
+                "sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced"
             ],
-            "version": "==1.14.0"
+            "version": "==1.15.0"
         },
         "smmap": {
             "hashes": [
