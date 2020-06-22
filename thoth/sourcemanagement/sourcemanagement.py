@@ -42,9 +42,7 @@ BASE_URL = {"github": "https://api.github.com", "gitlab": "https://gitlab.com//a
 class SourceManagement:
     """Abstract source code management services like GitHub and GitLab."""
 
-    def __init__(
-        self, service_type: ServiceType, service_url: str, token: str, slug: str
-    ):
+    def __init__(self, service_type: ServiceType, service_url: str, token: str, slug: str):
         """Initialize source code management tools abstraction.
 
         Note that we are using OGR for calls. OGR keeps URL to services in its global context per GitHub/GitLab.
@@ -84,28 +82,20 @@ class SourceManagement:
         return None
 
     def open_issue_if_not_exist(
-        self,
-        title: str,
-        body: typing.Callable,
-        refresh_comment: typing.Callable = None,
-        labels: list = None,
+        self, title: str, body: typing.Callable, refresh_comment: typing.Callable = None, labels: list = None,
     ) -> Issue:
         """Open the given issue if does not exist already (as opened)."""
         _LOGGER.debug(f"Reporting issue {title!r}")
         issue = self.get_issue(title)
         if issue:
-            _LOGGER.info(
-                f"Issue already noted on upstream with title #{issue._raw_issue.title}"
-            )
+            _LOGGER.info(f"Issue already noted on upstream with title #{issue._raw_issue.title}")
             if not refresh_comment:
                 return issue
 
             comment_body = refresh_comment(issue)
             if comment_body:
                 issue.comment(comment_body)
-                _LOGGER.info(
-                    f"Added refresh comment to issue with title #{issue._raw_issue.title}"
-                )
+                _LOGGER.info(f"Added refresh comment to issue with title #{issue._raw_issue.title}")
             else:
                 _LOGGER.debug(f"Refresh comment not added")
         else:
@@ -141,8 +131,7 @@ class SourceManagement:
         user_ids = []
         for username in usernames:
             response = requests.Session().get(
-                f"{BASE_URL['gitlab']}/users?username={username}",
-                headers={f"Authorization": f"token {self.token}"},
+                f"{BASE_URL['gitlab']}/users?username={username}", headers={f"Authorization": f"token {self.token}"},
             )
             res = json.loads(response.text)
             userid = res.pop().get("id")
@@ -153,7 +142,7 @@ class SourceManagement:
     def _gitlab_assign(self, issue: Issue, assignees: typing.List[str]) -> None:
         """Assign the given users to a particular issue. Gitlab assignee id's are different from username."""
         assignees = self._gitlab_fetch_userid(assignees)
-        data = { "assignee_ids":assignees}
+        data = {"assignee_ids": assignees}
         response = requests.Session().put(
             f"{BASE_URL['gitlab']}/projects/{quote_plus(self.slug)}/issues/{issue.id}",
             params={"private_token": self.token},
@@ -172,22 +161,19 @@ class SourceManagement:
         else:
             raise NotImplementedError
 
-    def open_merge_request(
-        self, commit_msg: str, branch_name: str, body: str, labels: list
-    ) -> PullRequest:
+    def open_merge_request(self, commit_msg: str, branch_name: str, body: str, labels: list) -> PullRequest:
         """Open a merge request for the given branch."""
         try:
-            merge_request = self.repository.create_pr(
-                commit_msg, body, "master", branch_name
-            )
+            if self.repository.is_fork:
+                merge_request = self.repository.create_pr(commit_msg, body, "master", branch_name, self.namespace)
+            else:
+                merge_request = self.repository.create_pr(commit_msg, body, "master", branch_name)
             merge_request.add_label(*labels)
 
         except Exception as exc:
             raise CreatePRError(f"Failed to create a pull request: {exc}")
         else:
-            _LOGGER.info(
-                f"Newly created pull request #{merge_request.id} available at {merge_request.url}"
-            )
+            _LOGGER.info(f"Newly created pull request #{merge_request.id} available at {merge_request.url}")
             return merge_request
 
     def _github_delete_branch(self, branch: str) -> None:
