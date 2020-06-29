@@ -37,7 +37,7 @@ class PipenvError(SourceManagementException):
         self.stdout = command.out
         self.stderr = command.err
         self.raw_command = command
-        super().__init__(*args, **kwargs)
+        super().__init__(*args)
 
 
 class PullRequestError(SourceManagementException):
