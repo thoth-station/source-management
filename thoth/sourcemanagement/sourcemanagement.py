@@ -29,7 +29,6 @@ from ogr.services.gitlab import GitlabService
 from .enums import ServiceType
 from ogr.abstract import Issue
 from ogr.abstract import PullRequest
-from ogr.abstract import PRStatus
 from .exception import CannotFetchPRError
 from .exception import CannotFetchBranchesError
 from .exception import CreatePRError
@@ -59,17 +58,13 @@ class SourceManagement:
                 self.service = GithubService(self.token, instance_url=service_url)
             else:
                 self.service = GithubService(self.token)
-            self.repository = self.service.get_project(
-                repo=self.repo, namespace=self.namespace
-            )
+            self.repository = self.service.get_project(repo=self.repo, namespace=self.namespace)
         elif self.service_type == ServiceType.GITLAB:
             if service_url:
                 self.service = GitlabService(self.token, instance_url=service_url)
             else:
                 self.service = GitlabService(self.token)
-            self.repository = self.service.get_project(
-                repo=self.repo, namespace=self.namespace
-            )
+            self.repository = self.service.get_project(repo=self.repo, namespace=self.namespace)
         else:
             raise NotImplementedError
 
@@ -127,7 +122,7 @@ class SourceManagement:
         response.raise_for_status()
 
     def _gitlab_fetch_userid(self, usernames: typing.List[str]) -> typing.List[int]:
-        """Method fetches the corresponding user ids for usernames."""
+        """Fetch the corresponding user ids for usernames."""
         user_ids = []
         for username in usernames:
             response = requests.Session().get(
@@ -141,8 +136,8 @@ class SourceManagement:
 
     def _gitlab_assign(self, issue: Issue, assignees: typing.List[str]) -> None:
         """Assign the given users to a particular issue. Gitlab assignee id's are different from username."""
-        assignees = self._gitlab_fetch_userid(assignees)
-        data = {"assignee_ids": assignees}
+        assignees_ids = self._gitlab_fetch_userid(assignees)
+        data = {"assignee_ids": assignees_ids}
         response = requests.Session().put(
             f"{BASE_URL['gitlab']}/projects/{quote_plus(self.slug)}/issues/{issue.id}",
             params={"private_token": self.token},

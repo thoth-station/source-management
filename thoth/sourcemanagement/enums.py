@@ -36,9 +36,9 @@ class ServiceType(Enum):
 
         name = name.lower()
 
-        if name == 'github':
+        if name == "github":
             return cls.GITHUB
-        elif name == 'gitlab':
+        elif name == "gitlab":
             return cls.GITLAB
         else:
             raise NotImplementedError(f"Unsupported service {name!r}, available ones are 'github' and 'gitlab'")

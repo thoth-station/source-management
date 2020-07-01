@@ -15,25 +15,30 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+"""Setup file for source-management."""
+
 import os
 import setuptools
 from pathlib import Path
 
+
 def get_install_requires():
-    with open('requirements.txt', 'r') as requirements_file:
+    """Fetch requirements from requirements file."""
+    with open("requirements.txt", "r") as requirements_file:
         # TODO: respect hashes in requirements.txt file
         res = requirements_file.readlines()
-        return [req.split(' ', maxsplit=1)[0] for req in res if req]
+        return [req.split(" ", maxsplit=1)[0] for req in res if req]
 
 
 def get_version():
-    with open(os.path.join('thoth/sourcemanagement', '__init__.py')) as f:
+    """Fetch requirements from init file."""
+    with open(os.path.join("thoth/sourcemanagement", "__init__.py")) as f:
         content = f.readlines()
 
     for line in content:
-        if line.startswith('__version__ ='):
+        if line.startswith("__version__ ="):
             # dirty, remove trailing and leading chars
-            return line.split(' = ')[1][1:-2]
+            return line.split(" = ")[1][1:-2]
     raise ValueError("No version identifier found")
 
 
@@ -45,9 +50,9 @@ setuptools.setup(
     author="Sai Sankar Gochhayat",
     author_email="saisankargochhayat@gmail.com",
     description="This package helps thoth app's interact with git forges like Github, Gitlab.",
-    long_description=Path('README.rst').read_text(),
+    long_description=Path("README.rst").read_text(),
     url="https://github.com/thoth-station/source-management",
-    license='GPLv3+',
+    license="GPLv3+",
     packages=setuptools.find_packages(),
     install_requires=get_install_requires(),
     classifiers=[
@@ -55,5 +60,5 @@ setuptools.setup(
         "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.6',
+    python_requires=">=3.6",
 )

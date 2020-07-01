@@ -1,0 +1,11 @@
+include LICENSE
+include mypy.ini
+include OWNERS
+include Pipfile
+include Pipfile.lock
+include requirements.txt
+exclude *.toml
+exclude *.yaml
+exclude .coafile
+exclude *.md
+.coafile
