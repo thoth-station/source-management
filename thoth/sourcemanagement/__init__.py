@@ -16,4 +16,4 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 """Thoth SourceManagement Package."""
 
-__version__ = "0.3.0"
+__version__ = "0.3.1"
