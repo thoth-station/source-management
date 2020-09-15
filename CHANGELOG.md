@@ -12,3 +12,12 @@ Initial project setup
 * Changed object creation order
 * Bumped version
 * Added instance url
+
+## Release 0.3.1 (2020-09-15T20:46:13)
+### Features
+* Fixed precommit (#24)
+* Create OWNERS
+### Improvements
+* Exception base class doesnt take kwargs
+### Automatic Updates
+* :pushpin: Automatic update of dependency ogr from 0.12.1 to 0.14.0 (#26)
