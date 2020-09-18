@@ -17,3 +17,11 @@
 """Thoth SourceManagement Package."""
 
 __version__ = "0.3.1"
+
+# flake8: noqa
+from ogr.abstract import Issue
+from ogr.abstract import PullRequest
+from ogr.abstract import PRStatus
+from .exception import CannotFetchPRError
+from .exception import CannotFetchBranchesError
+from .exception import CreatePRError
