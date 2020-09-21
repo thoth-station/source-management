@@ -21,3 +21,7 @@ Initial project setup
 * Exception base class doesnt take kwargs
 ### Automatic Updates
 * :pushpin: Automatic update of dependency ogr from 0.12.1 to 0.14.0 (#26)
+
+## Release 0.3.2 (2020-09-18T16:14:28)
+### Features
+* Fixed missing imports
