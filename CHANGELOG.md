@@ -25,3 +25,10 @@ Initial project setup
 ## Release 0.3.2 (2020-09-18T16:14:28)
 ### Features
 * Fixed missing imports
+
+## Release 0.3.3 (2020-11-02T19:08:51)
+### Features
+* Remove init file from namespaced package (#36)
+### Automatic Updates
+* :pushpin: Automatic update of dependency ogr from 0.15.0 to 0.17.0 (#35)
+* :pushpin: Automatic update of dependency ogr from 0.14.0 to 0.15.0 (#30)
