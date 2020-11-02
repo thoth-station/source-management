@@ -53,7 +53,7 @@ setuptools.setup(
     long_description=Path("README.rst").read_text(),
     url="https://github.com/thoth-station/source-management",
     license="GPLv3+",
-    packages=setuptools.find_packages(),
+    packages=["thoth.sourcemanagement"],
     install_requires=get_install_requires(),
     classifiers=[
         "Programming Language :: Python :: 3",
