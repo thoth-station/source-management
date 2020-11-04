@@ -19,6 +19,8 @@
 
 import logging
 import typing
+from typing import Optional
+from ogr.services.github import service  # noqa: F401
 
 import requests
 from urllib.parse import quote_plus
@@ -26,6 +28,7 @@ from urllib.parse import quote_plus
 from ogr.services.github import GithubService
 from ogr.services.gitlab import GitlabService
 
+from .github_authentication import GithubAuthentication
 from .enums import ServiceType
 from ogr.abstract import Issue
 from ogr.abstract import PullRequest
@@ -41,27 +44,44 @@ BASE_URL = {"github": "https://api.github.com", "gitlab": "https://gitlab.com//a
 class SourceManagement:
     """Abstract source code management services like GitHub and GitLab."""
 
-    def __init__(self, service_type: ServiceType, service_url: str, token: str, slug: str):
+    def __init__(
+        self, service_type: ServiceType, service_url: str, slug: str, token: Optional[str], installation: bool = True,
+    ):
         """Initialize source code management tools abstraction.
 
         Note that we are using OGR for calls. OGR keeps URL to services in its global context per GitHub/GitLab.
         This is global context is initialized in the manager with a hope to fix this behavior for our needs.
         """
         self.service_type = service_type
+        self.service_url = service_url
         self.slug = slug
         self.service_url = service_url
         self.token = token
         self.namespace, self.repo = slug.rsplit("/", 1)
+        self.installation = installation
+        self.token_expire_time = None
+        self.github_auth_obj = None
 
+        if not installation and not token:
+            raise ValueError("Token nor Installation ID found during initialization.")
+        if installation:
+            self.github_auth_obj = GithubAuthentication(self.slug)
+            self.token, self.token_expire_time = self.github_auth_obj.get_access_token()
+
+        # Initialize ogr service object
+        self._init_helper()
+
+    def _init_helper(self):
+        """Handle the initialization or reinitialization of OGR object."""
         if self.service_type == ServiceType.GITHUB:
-            if service_url:
-                self.service = GithubService(self.token, instance_url=service_url)
+            if self.service_url:
+                self.service = GithubService(self.token, instance_url=self.service_url)
             else:
                 self.service = GithubService(self.token)
             self.repository = self.service.get_project(repo=self.repo, namespace=self.namespace)
         elif self.service_type == ServiceType.GITLAB:
-            if service_url:
-                self.service = GitlabService(self.token, instance_url=service_url)
+            if self.service_url:
+                self.service = GitlabService(self.token, instance_url=self.service_url)
             else:
                 self.service = GitlabService(self.token)
             self.repository = self.service.get_project(repo=self.repo, namespace=self.namespace)
