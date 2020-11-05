@@ -24,6 +24,7 @@ import time
 import json
 import os
 import typing
+from pathlib import Path
 
 _BASE_URL = "https://api.github.com/"
 
@@ -31,7 +32,9 @@ _BASE_URL = "https://api.github.com/"
 class GithubAuthentication:
     """Handles getting the OAuth Token for the Github Application."""
 
-    GITHUB_PRIVATE_KEY = os.getenv("GITHUB_PRIVATE_KEY", None)
+    GITHUB_PRIVATE_KEY_PATH = str(os.getenv("GITHUB_PRIVATE_KEY_PATH"))
+    _FILE_PATH = Path(GITHUB_PRIVATE_KEY_PATH)
+    GITHUB_PRIVATE_KEY = open(_FILE_PATH, "r").read()
     GITHUB_APP_ID = os.getenv("GITHUB_APP_ID", None)
 
     def __init__(self, slug: str) -> None:
@@ -42,14 +45,14 @@ class GithubAuthentication:
                 "Cannot authenticate as Github because of missing values. \
                     Please check if APP ID and Private key are set."
             )
+        # Read and encode
+        self.cert_str = self.GITHUB_PRIVATE_KEY
+        self.cert_bytes = self.cert_str.encode()
 
     def _get_header(self):
         """Get the application headers for authentication."""
-        # Read and encode
-        cert_str = self.GITHUB_PRIVATE_KEY
-        cert_bytes = cert_str.encode()
         time_since_epoch_in_seconds = int(time.time())
-        private_key = default_backend().load_pem_private_key(cert_bytes, None)
+        private_key = default_backend().load_pem_private_key(self.cert_bytes, None)
         payload = {
             # issued at time
             "iat": time_since_epoch_in_seconds,
