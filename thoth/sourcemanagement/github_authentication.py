@@ -23,7 +23,6 @@ import requests
 import time
 import json
 import os
-import typing
 from pathlib import Path
 
 _BASE_URL = "https://api.github.com/"
@@ -69,7 +68,7 @@ class GithubAuthentication:
         }
         return headers
 
-    def get_access_token(self) -> typing.Tuple[str, str]:
+    def get_access_token(self) -> str:
         """Fetch the installation ID and use it get the access token."""
         # Logic to fetch installation id of a repo
         # https://docs.github.com/en/free-pro-team@latest/rest/reference/apps#get-a-repository-installation-for-the-authenticated-app
@@ -83,4 +82,4 @@ class GithubAuthentication:
         if response.status_code != 201:
             raise ValueError(f"Access token couldn't be fetched. Error - {response.content.decode()}")
         response_dict: dict = json.loads(response.content.decode())
-        return response_dict.get("token"), response_dict.get("expires_at")  # type: ignore
+        return response_dict.get("token")  # type: ignore
