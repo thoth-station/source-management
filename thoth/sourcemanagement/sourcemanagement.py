@@ -98,11 +98,12 @@ class SourceManagement:
             """Check if access token as expired and refresh if necessary."""
 
             def wrapper(sourcemanagement, *args, **kwargs):
-                if datetime.datetime.now() > sourcemanagement.token_expire_time:
-                    sourcemanagement.token = sourcemanagement.github_auth_obj.get_access_token()
-                    sourcemanagement.token_expire_time = datetime.datetime.now() + datetime.timedelta(
-                        minutes=9, seconds=30
-                    )
+                if sourcemanagement.installation:  # We check if installation is being used.
+                    if datetime.datetime.now() > sourcemanagement.token_expire_time:
+                        sourcemanagement.token = sourcemanagement.github_auth_obj.get_access_token()
+                        sourcemanagement.token_expire_time = datetime.datetime.now() + datetime.timedelta(
+                            minutes=9, seconds=30
+                        )
                 return decorated(sourcemanagement, *args, **kwargs)
 
             return wrapper
