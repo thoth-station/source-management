@@ -19,9 +19,10 @@
 
 import logging
 import typing
+import functools
 from typing import Optional
 from ogr.services.github import service  # noqa: F401
-
+from typing import Any
 import requests
 from urllib.parse import quote_plus
 
@@ -90,25 +91,22 @@ class SourceManagement:
         else:
             raise NotImplementedError
 
-    class Token:
-        """Ensure tokens are refreshed if its close to expiring."""
+    def refresh_access_token(decorated: Any):  # noqa: N805
+        """Check if access token as expired and refresh if necessary."""
 
-        @staticmethod
-        def refresh_access_token(decorated):
-            """Check if access token as expired and refresh if necessary."""
-
-            def wrapper(sourcemanagement, *args, **kwargs):
-                if sourcemanagement.installation:  # We check if installation is being used.
-                    if datetime.datetime.now() > sourcemanagement.token_expire_time:
-                        sourcemanagement.token = sourcemanagement.github_auth_obj.get_access_token()
-                        sourcemanagement.token_expire_time = datetime.datetime.now() + datetime.timedelta(
-                            minutes=9, seconds=30
-                        )
+        @functools.wraps(decorated)
+        def wrapper(sourcemanagement, *args, **kwargs):
+            if sourcemanagement.installation:  # We check if installation is being used.
+                if datetime.datetime.now() > sourcemanagement.token_expire_time:
+                    sourcemanagement.token = sourcemanagement.github_auth_obj.get_access_token()
+                    sourcemanagement.token_expire_time = datetime.datetime.now() + datetime.timedelta(
+                        minutes=9, seconds=30
+                    )
                 return decorated(sourcemanagement, *args, **kwargs)
 
-            return wrapper
+        return wrapper
 
-    @Token.refresh_access_token
+    @refresh_access_token
     def get_issue(self, title: str) -> Issue:
         """Retrieve issue with the given title."""
         for issue in self.repository.get_issue_list():
@@ -117,7 +115,7 @@ class SourceManagement:
 
         return None
 
-    @Token.refresh_access_token
+    @refresh_access_token
     def open_issue_if_not_exist(
         self, title: str, body: typing.Callable, refresh_comment: typing.Callable = None, labels: list = None,
     ) -> Issue:
@@ -142,7 +140,7 @@ class SourceManagement:
 
         return issue
 
-    @Token.refresh_access_token
+    @refresh_access_token
     def close_issue_if_exists(self, title: str, comment: str = None):
         """Close the given issue (referenced by its title) and close it with a comment."""
         issue = self.get_issue(title)
@@ -153,7 +151,7 @@ class SourceManagement:
         issue.comment(comment)
         issue.close()
 
-    @Token.refresh_access_token
+    @refresh_access_token
     def _github_assign(self, issue: Issue, assignees: typing.List[str]) -> None:
         """Assign the given users to a particular issue."""
         data = {"assignees": assignees}
@@ -165,7 +163,7 @@ class SourceManagement:
 
         response.raise_for_status()
 
-    @Token.refresh_access_token
+    @refresh_access_token
     def _gitlab_fetch_userid(self, usernames: typing.List[str]) -> typing.List[int]:
         """Fetch the corresponding user ids for usernames."""
         user_ids = []
@@ -179,7 +177,7 @@ class SourceManagement:
                 user_ids.append(userid)
         return user_ids
 
-    @Token.refresh_access_token
+    @refresh_access_token
     def _gitlab_assign(self, issue: Issue, assignees: typing.List[str]) -> None:
         """Assign the given users to a particular issue. Gitlab assignee id's are different from username."""
         assignees_ids = self._gitlab_fetch_userid(assignees)
@@ -192,7 +190,7 @@ class SourceManagement:
 
         response.raise_for_status()
 
-    @Token.refresh_access_token
+    @refresh_access_token
     def assign(self, issue: Issue, assignees: typing.List[str]) -> None:
         """Assign users (by their accounts) to the given issue."""
         # Replace with OGR methods, when implemented in OGR.
@@ -203,7 +201,7 @@ class SourceManagement:
         else:
             raise NotImplementedError
 
-    @Token.refresh_access_token
+    @refresh_access_token
     def open_merge_request(self, commit_msg: str, branch_name: str, body: str, labels: list) -> PullRequest:
         """Open a merge request for the given branch."""
         try:
@@ -219,7 +217,7 @@ class SourceManagement:
             _LOGGER.info(f"Newly created pull request #{merge_request.id} available at {merge_request.url}")
             return merge_request
 
-    @Token.refresh_access_token
+    @refresh_access_token
     def _github_delete_branch(self, branch: str) -> None:
         """Delete the given branch from remote repository."""
         response = requests.Session().delete(
@@ -230,7 +228,7 @@ class SourceManagement:
         response.raise_for_status()
         # GitHub returns an empty string, noting to return.
 
-    @Token.refresh_access_token
+    @refresh_access_token
     def _gitlab_delete_branch(self, branch: str) -> None:
         """Delete the given branch from remote repository."""
         response = requests.Session().delete(
@@ -239,7 +237,7 @@ class SourceManagement:
         )
         response.raise_for_status()
 
-    @Token.refresh_access_token
+    @refresh_access_token
     def list_branches(self) -> set:
         """Get branches available on remote."""
         try:
@@ -249,7 +247,7 @@ class SourceManagement:
         else:
             return branches
 
-    @Token.refresh_access_token
+    @refresh_access_token
     def get_prs(self) -> list:
         """Get all the open PR objects as a list for a repo."""
         try:
@@ -259,7 +257,7 @@ class SourceManagement:
         else:
             return prs
 
-    @Token.refresh_access_token
+    @refresh_access_token
     def delete_branch(self, branch_name: str) -> None:
         """Delete the given branch from remote."""
         # TODO: remove this logic once OGR will support branch operations

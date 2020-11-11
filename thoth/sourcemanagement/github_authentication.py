@@ -31,14 +31,17 @@ _BASE_URL = "https://api.github.com/"
 class GithubAuthentication:
     """Handles getting the OAuth Token for the Github Application."""
 
-    GITHUB_PRIVATE_KEY_PATH = str(os.getenv("GITHUB_PRIVATE_KEY_PATH"))
-    _FILE_PATH = Path(GITHUB_PRIVATE_KEY_PATH)
-    GITHUB_PRIVATE_KEY = open(_FILE_PATH, "r").read()
-    GITHUB_APP_ID = os.getenv("GITHUB_APP_ID", None)
-
     def __init__(self, slug: str) -> None:
         """Initialize and check values."""
         self.slug = slug
+
+        self.GITHUB_PRIVATE_KEY_PATH = str(os.getenv("GITHUB_PRIVATE_KEY_PATH"))
+        self._FILE_PATH = Path(self.GITHUB_PRIVATE_KEY_PATH)
+        self.GITHUB_PRIVATE_KEY = None
+        with open(self._FILE_PATH, "r") as f:
+            self.GITHUB_PRIVATE_KEY = f.read()
+        self.GITHUB_APP_ID = os.getenv("GITHUB_APP_ID", None)
+
         if not self.GITHUB_APP_ID or not self.GITHUB_PRIVATE_KEY:
             raise ValueError(
                 "Cannot authenticate as Github because of missing values. \
