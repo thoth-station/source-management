@@ -32,3 +32,9 @@ Initial project setup
 ### Automatic Updates
 * :pushpin: Automatic update of dependency ogr from 0.15.0 to 0.17.0 (#35)
 * :pushpin: Automatic update of dependency ogr from 0.14.0 to 0.15.0 (#30)
+
+## Release 0.4.0 (2020-11-12T15:34:15)
+### Features
+* Github App Authentication (#42)
+### Automatic Updates
+* :pushpin: Automatic update of dependency requests from 2.24.0 to 2.25.0 (#43)
