@@ -35,20 +35,20 @@ class GithubAuthentication:
         """Initialize and check values."""
         self.slug = slug
 
-        self.GITHUB_PRIVATE_KEY_PATH = str(os.getenv("GITHUB_PRIVATE_KEY_PATH"))
-        self._FILE_PATH = Path(self.GITHUB_PRIVATE_KEY_PATH)
-        self.GITHUB_PRIVATE_KEY = None
-        with open(self._FILE_PATH, "r") as f:
-            self.GITHUB_PRIVATE_KEY = f.read()
-        self.GITHUB_APP_ID = os.getenv("GITHUB_APP_ID", None)
+        self.github_private_key_path = str(os.getenv("GITHUB_PRIVATE_KEY_PATH"))
+        self._file_path = Path(self.github_private_key_path)
+        self.github_private_key = None
+        with open(self._file_path, "r") as f:
+            self.github_private_key = f.read()
+        self.github_app_id = os.getenv("GITHUB_APP_ID", None)
 
-        if not self.GITHUB_APP_ID or not self.GITHUB_PRIVATE_KEY:
+        if not self.github_app_id or not self.github_private_key:
             raise ValueError(
                 "Cannot authenticate as Github because of missing values. \
                     Please check if APP ID and Private key are set."
             )
         # Read and encode
-        self.cert_str = self.GITHUB_PRIVATE_KEY
+        self.cert_str = self.github_private_key
         self.cert_bytes = self.cert_str.encode()
 
     def _get_header(self):
@@ -61,7 +61,7 @@ class GithubAuthentication:
             # JWT expiration time (10 minute maximum)
             "exp": time_since_epoch_in_seconds + (10 * 60),
             # GitHub App's identifier
-            "iss": str(self.GITHUB_APP_ID),
+            "iss": str(self.github_app_id),
         }
         jwt_generated = jwt.encode(payload, private_key, algorithm="RS256")
 
