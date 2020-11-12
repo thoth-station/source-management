@@ -16,7 +16,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 """Thoth SourceManagement Package."""
 
-__version__ = "0.3.3"
+__version__ = "0.4.0"
 
 # flake8: noqa
 from ogr.abstract import Issue
