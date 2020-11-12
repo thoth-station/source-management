@@ -19,13 +19,17 @@
 
 import logging
 import typing
-
+import functools
+from typing import Optional
+from ogr.services.github import service  # noqa: F401
+from typing import Any
 import requests
 from urllib.parse import quote_plus
 
 from ogr.services.github import GithubService
 from ogr.services.gitlab import GitlabService
 
+from .github_authentication import GithubAuthentication
 from .enums import ServiceType
 from ogr.abstract import Issue
 from ogr.abstract import PullRequest
@@ -33,6 +37,7 @@ from .exception import CannotFetchPRError
 from .exception import CannotFetchBranchesError
 from .exception import CreatePRError
 import json
+import datetime
 
 _LOGGER = logging.getLogger(__name__)
 BASE_URL = {"github": "https://api.github.com", "gitlab": "https://gitlab.com//api/v4"}
@@ -41,33 +46,67 @@ BASE_URL = {"github": "https://api.github.com", "gitlab": "https://gitlab.com//a
 class SourceManagement:
     """Abstract source code management services like GitHub and GitLab."""
 
-    def __init__(self, service_type: ServiceType, service_url: str, token: str, slug: str):
+    def __init__(
+        self, service_type: ServiceType, service_url: str, slug: str, token: Optional[str], installation: bool = True,
+    ):
         """Initialize source code management tools abstraction.
 
         Note that we are using OGR for calls. OGR keeps URL to services in its global context per GitHub/GitLab.
         This is global context is initialized in the manager with a hope to fix this behavior for our needs.
         """
         self.service_type = service_type
+        self.service_url = service_url
         self.slug = slug
         self.service_url = service_url
         self.token = token
         self.namespace, self.repo = slug.rsplit("/", 1)
+        self.installation = installation
+        # token expires after 10 mins
+        self.token_expire_time = datetime.datetime.now() + datetime.timedelta(minutes=9, seconds=30)
+        self.github_auth_obj = None
 
+        if not installation and not token:
+            raise ValueError("Token nor Installation ID found during initialization.")
+        if installation:
+            self.github_auth_obj = GithubAuthentication(self.slug)
+            self.token = self.github_auth_obj.get_access_token()
+
+        # Initialize ogr service object
+        self._init_helper()
+
+    def _init_helper(self):
+        """Handle the initialization or reinitialization of OGR object."""
         if self.service_type == ServiceType.GITHUB:
-            if service_url:
-                self.service = GithubService(self.token, instance_url=service_url)
+            if self.service_url:
+                self.service = GithubService(self.token, instance_url=self.service_url)
             else:
                 self.service = GithubService(self.token)
             self.repository = self.service.get_project(repo=self.repo, namespace=self.namespace)
         elif self.service_type == ServiceType.GITLAB:
-            if service_url:
-                self.service = GitlabService(self.token, instance_url=service_url)
+            if self.service_url:
+                self.service = GitlabService(self.token, instance_url=self.service_url)
             else:
                 self.service = GitlabService(self.token)
             self.repository = self.service.get_project(repo=self.repo, namespace=self.namespace)
         else:
             raise NotImplementedError
 
+    def refresh_access_token(decorated: Any):  # noqa: N805
+        """Check if access token as expired and refresh if necessary."""
+
+        @functools.wraps(decorated)
+        def wrapper(sourcemanagement, *args, **kwargs):
+            if sourcemanagement.installation:  # We check if installation is being used.
+                if datetime.datetime.now() > sourcemanagement.token_expire_time:
+                    sourcemanagement.token = sourcemanagement.github_auth_obj.get_access_token()
+                    sourcemanagement.token_expire_time = datetime.datetime.now() + datetime.timedelta(
+                        minutes=9, seconds=30
+                    )
+                return decorated(sourcemanagement, *args, **kwargs)
+
+        return wrapper
+
+    @refresh_access_token
     def get_issue(self, title: str) -> Issue:
         """Retrieve issue with the given title."""
         for issue in self.repository.get_issue_list():
@@ -76,6 +115,7 @@ class SourceManagement:
 
         return None
 
+    @refresh_access_token
     def open_issue_if_not_exist(
         self, title: str, body: typing.Callable, refresh_comment: typing.Callable = None, labels: list = None,
     ) -> Issue:
@@ -100,6 +140,7 @@ class SourceManagement:
 
         return issue
 
+    @refresh_access_token
     def close_issue_if_exists(self, title: str, comment: str = None):
         """Close the given issue (referenced by its title) and close it with a comment."""
         issue = self.get_issue(title)
@@ -110,6 +151,7 @@ class SourceManagement:
         issue.comment(comment)
         issue.close()
 
+    @refresh_access_token
     def _github_assign(self, issue: Issue, assignees: typing.List[str]) -> None:
         """Assign the given users to a particular issue."""
         data = {"assignees": assignees}
@@ -121,6 +163,7 @@ class SourceManagement:
 
         response.raise_for_status()
 
+    @refresh_access_token
     def _gitlab_fetch_userid(self, usernames: typing.List[str]) -> typing.List[int]:
         """Fetch the corresponding user ids for usernames."""
         user_ids = []
@@ -134,6 +177,7 @@ class SourceManagement:
                 user_ids.append(userid)
         return user_ids
 
+    @refresh_access_token
     def _gitlab_assign(self, issue: Issue, assignees: typing.List[str]) -> None:
         """Assign the given users to a particular issue. Gitlab assignee id's are different from username."""
         assignees_ids = self._gitlab_fetch_userid(assignees)
@@ -146,6 +190,7 @@ class SourceManagement:
 
         response.raise_for_status()
 
+    @refresh_access_token
     def assign(self, issue: Issue, assignees: typing.List[str]) -> None:
         """Assign users (by their accounts) to the given issue."""
         # Replace with OGR methods, when implemented in OGR.
@@ -156,6 +201,7 @@ class SourceManagement:
         else:
             raise NotImplementedError
 
+    @refresh_access_token
     def open_merge_request(self, commit_msg: str, branch_name: str, body: str, labels: list) -> PullRequest:
         """Open a merge request for the given branch."""
         try:
@@ -171,6 +217,7 @@ class SourceManagement:
             _LOGGER.info(f"Newly created pull request #{merge_request.id} available at {merge_request.url}")
             return merge_request
 
+    @refresh_access_token
     def _github_delete_branch(self, branch: str) -> None:
         """Delete the given branch from remote repository."""
         response = requests.Session().delete(
@@ -181,6 +228,7 @@ class SourceManagement:
         response.raise_for_status()
         # GitHub returns an empty string, noting to return.
 
+    @refresh_access_token
     def _gitlab_delete_branch(self, branch: str) -> None:
         """Delete the given branch from remote repository."""
         response = requests.Session().delete(
@@ -189,6 +237,7 @@ class SourceManagement:
         )
         response.raise_for_status()
 
+    @refresh_access_token
     def list_branches(self) -> set:
         """Get branches available on remote."""
         try:
@@ -198,6 +247,7 @@ class SourceManagement:
         else:
             return branches
 
+    @refresh_access_token
     def get_prs(self) -> list:
         """Get all the open PR objects as a list for a repo."""
         try:
@@ -207,6 +257,7 @@ class SourceManagement:
         else:
             return prs
 
+    @refresh_access_token
     def delete_branch(self, branch_name: str) -> None:
         """Delete the given branch from remote."""
         # TODO: remove this logic once OGR will support branch operations
