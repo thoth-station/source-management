@@ -20,7 +20,7 @@
 import logging
 import typing
 import functools
-from typing import Optional
+from typing import Optional, Tuple
 from ogr.services.github import service  # noqa: F401
 from typing import Any
 import requests
@@ -105,6 +105,11 @@ class SourceManagement:
                 return decorated(sourcemanagement, *args, **kwargs)
 
         return wrapper
+
+    @refresh_access_token
+    def get_access_token(self) -> Tuple:
+        """Retrieve the current access token and expire time from the class variables."""
+        return self.token, self.token_expire_time
 
     @refresh_access_token
     def get_issue(self, title: str) -> Issue:
