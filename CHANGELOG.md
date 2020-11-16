@@ -38,3 +38,7 @@ Initial project setup
 * Github App Authentication (#42)
 ### Automatic Updates
 * :pushpin: Automatic update of dependency requests from 2.24.0 to 2.25.0 (#43)
+
+## Release 0.4.1 (2020-11-16T18:24:03)
+### Improvements
+* Added a getter method for token and expire time (#48)
