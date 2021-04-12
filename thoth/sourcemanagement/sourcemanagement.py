@@ -47,7 +47,12 @@ class SourceManagement:
     """Abstract source code management services like GitHub and GitLab."""
 
     def __init__(
-        self, service_type: ServiceType, service_url: str, slug: str, token: Optional[str], installation: bool = True,
+        self,
+        service_type: ServiceType,
+        service_url: str,
+        slug: str,
+        token: Optional[str],
+        installation: bool = True,
     ):
         """Initialize source code management tools abstraction.
 
@@ -122,7 +127,11 @@ class SourceManagement:
 
     @refresh_access_token
     def open_issue_if_not_exist(
-        self, title: str, body: typing.Callable, refresh_comment: typing.Callable = None, labels: list = None,
+        self,
+        title: str,
+        body: typing.Callable,
+        refresh_comment: typing.Callable = None,
+        labels: list = None,
     ) -> Issue:
         """Open the given issue if does not exist already (as opened)."""
         _LOGGER.debug(f"Reporting issue {title!r}")
@@ -137,7 +146,7 @@ class SourceManagement:
                 issue.comment(comment_body)
                 _LOGGER.info(f"Added refresh comment to issue with title #{issue._raw_issue.title}")
             else:
-                _LOGGER.debug(f"Refresh comment not added")
+                _LOGGER.debug("Refresh comment not added")
         else:
             issue = self.repository.create_issue(title, body())
             issue.add_label(*set(labels or []))
@@ -162,7 +171,7 @@ class SourceManagement:
         data = {"assignees": assignees}
         response = requests.Session().post(
             f"{BASE_URL['github']}/repos/{self.slug}/issues/{issue.id}/assignees",
-            headers={f"Authorization": f"token {self.token}"},
+            headers={"Authorization": f"token {self.token}"},
             json=data,
         )
 
@@ -174,7 +183,8 @@ class SourceManagement:
         user_ids = []
         for username in usernames:
             response = requests.Session().get(
-                f"{BASE_URL['gitlab']}/users?username={username}", headers={f"Authorization": f"token {self.token}"},
+                f"{BASE_URL['gitlab']}/users?username={username}",
+                headers={"Authorization": f"token {self.token}"},
             )
             res = json.loads(response.text)
             userid = res.pop().get("id")
@@ -227,7 +237,7 @@ class SourceManagement:
         """Delete the given branch from remote repository."""
         response = requests.Session().delete(
             f"{BASE_URL['github']}/repos/{self.slug}/git/refs/heads/{branch}",
-            headers={f"Authorization": f"token {self.token}"},
+            headers={"Authorization": f"token {self.token}"},
         )
 
         response.raise_for_status()
