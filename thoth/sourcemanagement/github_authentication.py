@@ -66,7 +66,7 @@ class GithubAuthentication:
         jwt_generated = jwt.encode(payload, private_key, algorithm="RS256")
 
         headers = {
-            "Authorization": "Bearer {}".format(jwt_generated.decode()),
+            "Authorization": "Bearer {}".format(jwt_generated),
             "Accept": "application/vnd.github.machine-man-preview+json",
         }
         return headers
