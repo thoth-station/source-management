@@ -42,3 +42,12 @@ Initial project setup
 ## Release 0.4.1 (2020-11-16T18:24:03)
 ### Improvements
 * Added a getter method for token and expire time (#48)
+
+## Release 0.4.2 (2021-05-13T19:08:08)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet (#58)
+* jwt encoding is a string, decoding defeats purpose (#57)
+* ci updates for the application (#56)
+* :arrow_up: Automatic update of dependencies by Kebechet (#55)
+* :arrow_up: Automatic update of dependencies by Kebechet (#53)
+* bump python version (#51)
