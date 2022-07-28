@@ -20,15 +20,15 @@
 from delegator import Command
 
 
-class SourceManagementException(Exception):
+class SourceManagementExceptionError(Exception):
     """A base class for Kebechet exception hierarchy."""
 
 
-class ConfigurationError(SourceManagementException):
+class ConfigurationError(SourceManagementExceptionError):
     """Raised on error in configuration file."""
 
 
-class PipenvError(SourceManagementException):
+class PipenvError(SourceManagementExceptionError):
     """Raised on missing/invalid Pipenv or Pipenv.lock file."""
 
     def __init__(self, command: Command, *args, **kwargs):
@@ -40,25 +40,25 @@ class PipenvError(SourceManagementException):
         super().__init__(*args)
 
 
-class PullRequestError(SourceManagementException):
+class PullRequestError(SourceManagementExceptionError):
     """Raised in case of failed pull request."""
 
 
-class CannotFetchPRError(SourceManagementException):
+class CannotFetchPRError(SourceManagementExceptionError):
     """An exception raised if there OGR cannot fetch the PR's for a repo.
 
     Generally the token is invalid or doesn't have access to the repo.
     """
 
 
-class CannotFetchBranchesError(SourceManagementException):
+class CannotFetchBranchesError(SourceManagementExceptionError):
     """An exception raised if there OGR cannot fetch the repo branches.
 
     Generally the token is invalid or doesn't have access to the repo.
     """
 
 
-class CreatePRError(SourceManagementException):
+class CreatePRError(SourceManagementExceptionError):
     """An exception raised if there OGR cannot create an PR.
 
     Generally the token is invalid or doesn't have access to the repo.
