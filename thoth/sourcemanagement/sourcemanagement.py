@@ -130,8 +130,8 @@ class SourceManagement:
         self,
         title: str,
         body: typing.Callable,
-        refresh_comment: typing.Callable = None,
-        labels: list = None,
+        refresh_comment: typing.Union[typing.Callable, None] = None,
+        labels: typing.Union[list, None] = None,
     ) -> Issue:
         """Open the given issue if does not exist already (as opened)."""
         _LOGGER.debug(f"Reporting issue {title!r}")
@@ -155,7 +155,7 @@ class SourceManagement:
         return issue
 
     @refresh_access_token
-    def close_issue_if_exists(self, title: str, comment: str = None):
+    def close_issue_if_exists(self, title: str, comment: typing.Union[str, None] = None):
         """Close the given issue (referenced by its title) and close it with a comment."""
         issue = self.get_issue(title)
         if not issue:
