@@ -1,5 +1,16 @@
 # Changelog for Thoth's Source Management Project
 
+## Release 0.4.3 (2023-02-09T09:20:53)
+* 7f56ab9 ':arrow_up: Automatic update of dependencies by Kebechet for the ubi:8 environment'
+* e947e7c :pencil: fix some typing errors (mypy)
+* 5050749 :arrow_up: update OWNERS
+* 3ace605 :arrow_up: update pre-commit config
+* fb6b2e8 :arrow_up: Automatic update of dependencies by Kebechet for the ubi:8 environment
+* 8108903 Upgrade pre-commit image version (#68)
+* 070c39c :arrow_up: Automatic update of dependencies by Kebechet for the ubi:8 environment (#66)
+* d0e981d Update pyproject.toml to use Python 3.8 (#65)
+* 8693888 :arrow_up: Automatic update of dependencies by Kebechet
+
 ## [0.1.0] - 2020-Feb-27 - saisankargochhayat
 
 ### Added
