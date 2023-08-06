@@ -14,7 +14,7 @@ presubmits:
 - always_run: true
   context: op1st/prow/pytest
   decorate: true
-  name: thoth-pytest-py38
+  name: pytest
   skip_report: false
   spec:
     containers:
