@@ -20,4 +20,4 @@ presubmits:
     containers:
     - command:
       - /bin/run-pytest
-      image: quay.io/goern/thoth-pytest:v0.15.0
+      image: quay.io/thoth-station/thoth-pytest:v0.15.0
