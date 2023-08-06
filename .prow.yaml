@@ -14,10 +14,10 @@ presubmits:
 - always_run: true
   context: op1st/prow/pytest
   decorate: true
-  name: thoth-pytest-py38
+  name: pytest
   skip_report: false
   spec:
     containers:
     - command:
       - /bin/run-pytest
-      image: quay.io/goern/thoth-pytest:v0.15.0
+      image: quay.io/thoth-station/thoth-pytest:v0.15.0
